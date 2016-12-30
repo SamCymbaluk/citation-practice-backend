@@ -4,11 +4,13 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-      "build": "webpack --progress --watch"
+    "build": "webpack --progress --watch"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "knex": "^0.12.6",
+    "pg": "^6.1.2",
     "restify": "^4.3.0",
     "slug": "^0.9.1"
   },
