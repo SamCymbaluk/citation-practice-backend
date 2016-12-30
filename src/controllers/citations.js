@@ -3,6 +3,7 @@ const db = require('../common/database');
 module.exports = {
 
   getCitation : (req, res, next) => {
+    console.log(req.authorization);
     if(req.params.id) { //Specific citation
       get(req.params.id)
         .then((citation) => {
