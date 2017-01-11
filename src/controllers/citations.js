@@ -7,7 +7,7 @@ module.exports = {
       get(req.params.id)
         .then((citation) => {
           let httpCode = 200;
-          if(!citation){
+          if(!citation) {
             httpCode = 404;
           }
           res.send(httpCode, citation);
