@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "emailjs": "^1.0.8",
     "knex": "^0.12.6",
     "pg": "^6.1.2",
     "restify": "^4.3.0",

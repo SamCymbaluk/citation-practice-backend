@@ -1,4 +1,5 @@
 const db = require('../common/database');
+const postfix = require('../common/email');
 
 module.exports = {
   getResult : (req, res, next) => {
@@ -22,14 +23,39 @@ module.exports = {
 
   createResult : (req, res, next) => {
     //Insert Json payload stored in request params into db
+
+    const data = {
+      name_first: req.params.name_first,
+      name_last: req.params.name_last,
+      email: req.params.emails,
+      score: req.params.score
+    }
+
     db('results')
-      .insert(req.params)
+      .insert(data)
       .then((result) => {
         res.json({
           success: true,
           message: 'ok'
-        })
+        });
+        //Send emails
+        for(const email of req.params.teacher_emails) {
+          postfix.send({
+              text: //Final language TBD
+              `
+              ${req.params.name_first} ${req.params.name_last} completed a citation quiz.
+              Score: ${req.params.score}
+              `,
+              from: "sam@cathedralgaels.ca",
+              to: email,
+              subject: "Citation quiz results"
+
+          }, (err, message) => {
+            console.log(err, message);
+          });
+        }
       });
+
 
     next();
   }
