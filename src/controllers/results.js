@@ -3,22 +3,27 @@ const postfix = require('../common/email');
 
 module.exports = {
   getResult : (req, res, next) => {
-    if(req.params.id) { //Specific result
-      get(req.params.id)
-        .then((result) => {
-          let httpCode = 200;
-          if(!result) {
-            httpCode = 404;
-          }
-          res.send(httpCode, result);
-        });
-    } else { //All results
-      getAll(req.params.id)
-        .then((results) => {
-          res.send(results);
-        });
-    }
-    next();
+    db('results')
+      .first()
+      .where('id', req.params.id)
+      .then((result) => {
+        let httpCode = 200;
+        if(!result) {
+          httpCode = 404;
+        }
+        res.send(httpCode, result);
+        return next();
+      })
+      .catch((error) => res.send(error));
+  },
+
+  getResults : (req, res, next) => {
+    db('results')
+      .select()
+      .then((results) => {
+        res.send(results);
+        return next();
+      });
   },
 
   createResult : (req, res, next) => {
@@ -40,18 +45,15 @@ module.exports = {
         });
         //Send emails
         for(const email of req.params.teacher_emails) {
-          postfix.send({
-              text: //Final language TBD
-              `
-              ${req.params.name_first} ${req.params.name_last} completed a citation quiz.
-              Score: ${req.params.score}
-              `,
-              from: "sam@cathedralgaels.ca",
-              to: email,
-              subject: "Citation quiz results"
-
-          }, (err, message) => {
-            console.log(err, message);
+          postfix.sendMail({
+            from: 'learningres@cathedralgaels.ca',
+            to: email,
+            subject: 'Citation quiz results',
+            text:   //Final language TBD
+            `${req.params.name_first} ${req.params.name_last} completed a citation quiz.
+            Score: ${req.params.score}`
+            }, (err) => {
+              console.log(err);
           });
         }
       });
@@ -60,17 +62,4 @@ module.exports = {
     next();
   }
 
-}
-
-function get (uuid) {
-  return db('results')
-    .first()
-    .where('id', uuid)
-    .then((res) => res);
-}
-
-function getAll () {
-  return db('results')
-    .select()
-    .then((res) => res);
 }

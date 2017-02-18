@@ -1,8 +1,5 @@
-const email = require('emailjs');
+const email = require('nodemailer');
 
-module.exports = email.server.connect({
-     user:    process.env.EMAIL_USER,
-     password: process.env.EMAIL_PASSWORD,
-     host:    "localhost",
-     ssl:     false
+module.exports = email.createTransport({
+          name: 'localhost'
  });
