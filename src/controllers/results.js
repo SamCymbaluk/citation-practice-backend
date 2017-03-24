@@ -1,5 +1,5 @@
 const db = require('../common/database');
-const postfix = require('../common/email');
+const nodemailer = require('../common/email');
 
 module.exports = {
   getResult : (req, res, next) => {
@@ -32,7 +32,7 @@ module.exports = {
     const data = {
       name_first: req.params.name_first,
       name_last: req.params.name_last,
-      email: req.params.emails,
+      email: req.params.email,
       score: req.params.score
     }
 
@@ -45,21 +45,25 @@ module.exports = {
         });
         //Send emails
         for(const email of req.params.teacher_emails) {
-          postfix.sendMail({
-            from: 'learningres@cathedralgaels.ca',
-            to: email,
-            subject: 'Citation quiz results',
-            text:   //Final language TBD
-            `${req.params.name_first} ${req.params.name_last} completed a citation quiz.
-            Score: ${req.params.score}`
-            }, (err) => {
-              console.log(err);
-          });
+          _sendEmail(req, email);
         }
+        _sendEmail(req, data.email);
       });
 
 
     next();
   }
+}
 
+function _sendEmail(req, email) {
+  nodemailer.sendMail({
+    from: 'hwcdsb.cathedral@gmail.com',
+    to: email,
+    subject: 'Citation quiz results',
+    text:   //Final language TBD
+    `${req.params.name_first} ${req.params.name_last} just completed a citation quiz.
+    Score: ${req.params.score}`
+    }, (err) => {
+      console.log('Email error:', err);
+  });
 }
