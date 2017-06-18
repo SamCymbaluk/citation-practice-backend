@@ -4,6 +4,7 @@ const routes = require('./routes');
 const server = restify.createServer();
 
 server.use(restify.CORS());
+server.use(restify.authorizationParser());
 
 server.opts(/.*/, (req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");

@@ -1,4 +1,5 @@
 const db = require('../common/database');
+const uuidv4 = require('uuid/v4');
 
 module.exports = {
 
@@ -24,6 +25,45 @@ module.exports = {
         res.send(citations);
         return next();
       });
-  }
+  },
 
+  createCitation: (req, res, next) => {
+    db('citations')
+      .insert(req.body)
+      .then((response) => {
+        handleResponse(response);
+        return next();
+      })
+      .catch((error) => res.send(error));
+  },
+
+  editCitation : (req, res, next) => {
+    db('citations')
+      .where('id', req.params.id)
+      .update(req.body)
+      .then((response) => {
+        handleResponse(response);
+        return next();
+      })
+      .catch((error) => res.send(error));
+  },
+
+  delCitation : (req, res, next) => {
+    db('citations')
+      .where('id', req.params.id)
+      .del()
+      .then((response) => {
+        handleResponse(response);
+        return next();
+      })
+      .catch((error) => res.send(error));
+  }
+}
+
+function handleResponse(res) {
+  let httpCode = 200;
+  if (!res) {
+    httpCode = 500;
+  }
+  res.send(httpCode);
 }

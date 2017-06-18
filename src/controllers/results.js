@@ -1,5 +1,4 @@
 const db = require('../common/database');
-const nodemailer = require('../common/email');
 
 module.exports = {
   getResult : (req, res, next) => {
@@ -43,27 +42,16 @@ module.exports = {
           success: true,
           message: 'ok'
         });
-        //Send emails
-        for(const email of req.params.teacher_emails) {
-          _sendEmail(req, email);
-        }
-        _sendEmail(req, data.email);
+        return next();
       });
+  },
 
-
-    next();
-  }
-}
-
-function _sendEmail(req, email) {
-  nodemailer.sendMail({
-    from: 'hwcdsb.cathedral@gmail.com',
-    to: email,
-    subject: 'Citation quiz results',
-    text:   //Final language TBD
-    `${req.params.name_first} ${req.params.name_last} just completed a citation quiz.
-    Score: ${req.params.score}`
-    }, (err) => {
-      console.log('Email error:', err);
-  });
-}
+  getClassroomResults: (req, res, next) => {
+    db('results')
+      .where('classroom', rq.params.classroom)
+      .then((results) => {
+        res.send(results);
+        return next();
+      });
+  },
+};
