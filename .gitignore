@@ -7,3 +7,4 @@ build
 auth.json
 start.sh
 start.bat
+.idea
