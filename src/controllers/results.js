@@ -49,11 +49,15 @@ module.exports = {
   },
 
   getClassroomResults: (req, res, next) => {
-    db('results')
-      .where('classroom', rq.params.classroom)
-      .then((results) => {
-        res.send(results);
-        return next();
+    db('classrooms')
+      .where('key', req.params.classroom)
+      .then((classroom) => {
+        db('results')
+          .where('classroom', classroom[0].id)
+          .then((results) => {
+            res.send(results);
+            return next();
+          });
       });
   },
 };
