@@ -22,12 +22,18 @@ module.exports = {
 
   createClassroom : (req, res, next) => {
     db('classrooms')
-      .insert(req.body)
+      .insert({
+        id: req.params.id,
+        key: req.params.key
+      })
       .then((response) => {
-        handleResponse(response);
+        handleResponse(response, res);
         return next();
       })
-      .catch((error) => res.send(error));
+      .catch((error) => {
+        console.log(error);
+        res.send(error);
+      });
   },
 
   delClassroom : (req, res, next) => {
@@ -35,16 +41,16 @@ module.exports = {
       .where('id', req.params.id)
       .del()
       .then((response) => {
-        handleResponse(response);
+        handleResponse(response, res);;
         return next();
       })
       .catch((error) => res.send(error));
   },
 };
 
-function handleResponse(res) {
+function handleResponse(response, res) {
   let httpCode = 200;
-  if (!res) {
+  if (!response) {
     httpCode = 500;
   }
   res.send(httpCode);

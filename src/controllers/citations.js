@@ -31,7 +31,7 @@ module.exports = {
     db('citations')
       .insert(req.body)
       .then((response) => {
-        handleResponse(response);
+        handleResponse(response, res);
         return next();
       })
       .catch((error) => res.send(error));
@@ -40,9 +40,9 @@ module.exports = {
   editCitation : (req, res, next) => {
     db('citations')
       .where('id', req.params.id)
-      .update(req.body)
+      .update(req.params.data)
       .then((response) => {
-        handleResponse(response);
+        handleResponse(response, res);
         return next();
       })
       .catch((error) => res.send(error));
@@ -53,16 +53,16 @@ module.exports = {
       .where('id', req.params.id)
       .del()
       .then((response) => {
-        handleResponse(response);
+        handleResponse(response, res);
         return next();
       })
       .catch((error) => res.send(error));
   }
-}
+};
 
-function handleResponse(res) {
+function handleResponse(response, res) {
   let httpCode = 200;
-  if (!res) {
+  if (!response) {
     httpCode = 500;
   }
   res.send(httpCode);

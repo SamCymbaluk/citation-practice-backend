@@ -18,6 +18,7 @@ module.exports = {
 
   getResults : (req, res, next) => {
     db('results')
+      .orderBy('submission_timestamp', 'desc')
       .select()
       .then((results) => {
         res.send(results);
@@ -32,8 +33,9 @@ module.exports = {
       name_first: req.params.name_first,
       name_last: req.params.name_last,
       email: req.params.email,
-      score: req.params.score
-    }
+      score: req.params.score,
+      classroom: req.params.classroom
+    };
 
     db('results')
       .insert(data)
